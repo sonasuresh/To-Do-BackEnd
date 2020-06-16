@@ -129,11 +129,11 @@ async function updateDeliveryStatus (req, res) {
         var tomorrow = new Date(today)
         tomorrow.setDate(tomorrow.getDate() + 1)
         tomorrow = tomorrow.toString('YYYY-MM-dd').slice(0, -40)
-
+        console.log(tomorrow)
         updateFields = { deliveryStatus: status, deliveryDate: tomorrow }
       }
 
-      await Task.findOneAndUpdate({ tasKId: taskId }, { $set: updateFields }, (err, docs) => {
+      await Task.findOneAndUpdate({ _id: taskId }, { $set: updateFields }, (err, docs) => {
         if (err) {
           logger.error('DB Error')
           res.status(502).send({
