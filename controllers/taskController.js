@@ -226,7 +226,7 @@ async function scheduleDeliveryDate (req, res) {
         message: 'Bad Request!One or more fields are missing!'
       })
     } else {
-      await Task.findByIdAndUpdate(taskId, { $set: { deliveryDate } }, (err, docs) => {
+      await Task.findByOneAndUpdate({ _id: taskId }, { $set: { deliveryDate } }, (err, docs) => {
         if (err) {
           logger.error('DB Error')
           res.status(502).send({
@@ -288,21 +288,6 @@ async function getCurrentDayUserTasks (req, res) {
           })
         }
       }))
-      // await Task.find({ assignedTo: { $toObjectId: userId }, deliveryDate: today }, (err, docs) => {
-      //   if (err) {
-      //     logger.error('DB Error')
-      //     res.status(502).send({
-      //       success: false,
-      //       message: 'DB Error'
-      //     })
-      //   } else {
-      //     logger.info('Retrived Individuals Current Day Tasks')
-      //     res.status(200).send({
-      //       success: true,
-      //       message: docs
-      //     })
-      //   }
-      // })
     }
   } catch (error) {
     logger.error(error.message)
