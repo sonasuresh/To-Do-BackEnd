@@ -128,7 +128,7 @@ async function updateDeliveryStatus (req, res) {
         const today = new Date()
         var tomorrow = new Date(today)
         tomorrow.setDate(tomorrow.getDate() + 1)
-        tomorrow = tomorrow.toString('YYYY-MM-dd').slice(0, -40)
+        tomorrow = tomorrow.toString('YYYY-MM-dd').slice(0, -47)
         console.log(tomorrow)
         updateFields = { deliveryStatus: status, deliveryDate: tomorrow }
       }
