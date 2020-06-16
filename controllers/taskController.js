@@ -226,7 +226,7 @@ async function scheduleDeliveryDate (req, res) {
         message: 'Bad Request!One or more fields are missing!'
       })
     } else {
-      await Task.findByOneAndUpdate({ _id: taskId }, { $set: { deliveryDate } }, (err, docs) => {
+      await Task.findOneAndUpdate({ _id: taskId }, { $set: { deliveryDate } }, (err, docs) => {
         if (err) {
           logger.error('DB Error')
           res.status(502).send({
