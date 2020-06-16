@@ -132,7 +132,8 @@ async function updateDeliveryStatus (req, res) {
 
         updateFields = { deliveryStatus: status, deliveryDate: tomorrow }
       }
-      await Task.findByIdAndUpdate(taskId, { $set: updateFields }, (err, docs) => {
+
+      await Task.findOneAndUpdate({ tasKId: taskId }, { $set: updateFields }, (err, docs) => {
         if (err) {
           logger.error('DB Error')
           res.status(502).send({
@@ -252,6 +253,8 @@ async function scheduleDeliveryDate (req, res) {
 
 async function getCurrentDayUserTasks (req, res) {
   try {
+    console.log('here')
+
     const { userId } = req.params
     if (typeof userId === 'undefined') {
       res.status(400).send({
@@ -260,7 +263,17 @@ async function getCurrentDayUserTasks (req, res) {
       })
     } else {
       const today = new Date().toString('YYYY-MM-dd').slice(0, -40)
-      await Task.find({ assignedTo: userId, deliveryDate: today }, (err, docs) => {
+      console.log(today)
+      await Task.aggregate([
+        { $addFields: { userId: { $toObjectId: '$userId' } } },
+        {
+
+          $match: {
+            deliveryDate: today,
+            assignedTo: userId
+          }
+        }
+      ].exec((err, docs) => {
         if (err) {
           logger.error('DB Error')
           res.status(502).send({
@@ -274,7 +287,22 @@ async function getCurrentDayUserTasks (req, res) {
             message: docs
           })
         }
-      })
+      }))
+      // await Task.find({ assignedTo: { $toObjectId: userId }, deliveryDate: today }, (err, docs) => {
+      //   if (err) {
+      //     logger.error('DB Error')
+      //     res.status(502).send({
+      //       success: false,
+      //       message: 'DB Error'
+      //     })
+      //   } else {
+      //     logger.info('Retrived Individuals Current Day Tasks')
+      //     res.status(200).send({
+      //       success: true,
+      //       message: docs
+      //     })
+      //   }
+      // })
     }
   } catch (error) {
     logger.error(error.message)
